@@ -1,0 +1,88 @@
+Solution
+
+Package used
+```{r}
+options(java.parameters = c("-XX:+UseConcMarkSweepGC", "-Xmx8192m"))
+require(xlsx)
+require(sqldf)
+require(ggplot2)
+require(mclust)
+require(rpart)
+require(rpart.plot)
+```
+
+data input
+```{r}
+sale_data <- read.xlsx("Sale_Data.xlsx","Sales_Record")
+product_information <- read.xlsx("Sale_Data.xlsx","Product_Information")
+sale_data
+product_information
+```
+
+Data Observation / Cleansing
+```{r}
+#prove there are 70680 sales records
+
+#prove product name in both dataset are synchronized
+
+#prove product_price = actual paid
+
+#list any uncleaned data for cleansing if necessary
+
+```
+
+Merge Data
+```{r}
+
+```
+
+Mission 1.1 According to the merged dataset, suppose each location only have one vendor machine. Extract the Sales record from the merged dataset and store the data separately based on the Vendor machine location "A", "B", "C", "D", "E".
+```{r}
+
+```
+
+Mission 1.2 Calculate each vending machine’s sales revenue and number of orders for April 2017, and also compute the overall total sales revenue and total number of orders across all vending machines. Display the results in a table within the report.
+```{r}
+
+```
+
+Mission 1.3 Summaries the monthly average Revenue of each Vendor machine and also it is daily average Sale volume.
+```{r}
+
+```
+
+Mission2.1 visualise the top 5 sale product in June 2017 using bar chart
+```{r}
+
+```
+
+Mission 2.2 visualise all vendor machine revenue trend in monthly basis and also its growth rate in bar chart.
+```{r}
+
+```
+
+Mission2.3 plot margin revenue proportion for each vendor machine. Suppose the margin revenue rate of beverage and non-beverage is 25% and 20% respectively.
+```{r}
+
+```
+
+Mission 2.4 - plot the total revenue of each machines in April 2027 by bubble chart
+```{r}
+
+```
+
+Mission 2.5 - plot the revenue of Vendor machine C in June, July, and August and summmarise the data by heatmap graph.
+```{r}
+
+```
+Mission 3.1
+Use any machine learning approach to auto labelling the salse status of each brevage products in each Vendor machine. There are three types of labels : unsaleable, normal, trending. In which, unsaleable means the salse status was uncertain, and normal means there is no observable sale pattern, treding mean the sale is good. 
+
+```{r}
+
+```
+
+Mission 3.2  Use any machine learning approach to classify the sale segnments of different types of product category by the relationship of the Category total Revenue.
+```{r}
+
+```
