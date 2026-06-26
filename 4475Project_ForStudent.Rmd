@@ -22,12 +22,41 @@ product_information
 Data Observation / Cleansing
 ```{r}
 #prove there are 70680 sales records
-
+count <- nrow(sale_data)
+paste("There are",count,"sales records.")
+checking_record <- sqldf("select 
+                  DISTINCT sale_data.订单号 
+                  from sale_data 
+                  ")
+checking_record
 #prove product name in both dataset are synchronized
-
+checking_product_name <- sqldf("select 
+                  sale_data.订单号, sale_data.商品, product_information.商品 
+                  from sale_data 
+                  inner join product_information 
+                  on sale_data.商品 = product_information.商品
+                  where sale_data.商品 != product_information.商品
+                  ")
+checking_product_name
 #prove product_price = actual paid
-
+checking_price <- sqldf("select 
+                  sale_data.订单号, sale_data.商品, sale_data.应付金额, sale_data.实际金额
+                  from sale_data 
+                  where 应付金额 != 实际金额
+                  ")
+checking_price
 #list any uncleaned data for cleansing if necessary
+sale_data$支付时间 <- as.POSIXct(sale_data$支付时间, tz = "UTC", format = "%m/%d/%Y %H:%M:%S")
+names(product_information)[names(product_information) == '商品'] <- '商品1'
+sale_data
+product_information
+for (col in colnames(sale_data)) {
+  for (row in seq_len(nrow(sale_data))) {
+    if (is.na(sale_data[row, col])) {
+      paste("Column:", col, "- Row:", row, "is missing\n")
+    }
+  }
+}
 
 ```
 
