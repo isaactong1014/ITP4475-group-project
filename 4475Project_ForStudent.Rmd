@@ -70,9 +70,7 @@ Mission 1.1 According to the merged dataset, suppose each location only have one
 ```{r}
 sales_by_location <- sqldf("select * from combine
                            order by 地点")
-sales_by_location2 <- split(combine, combine$地点)
 sales_by_location
-sales_by_location2
 ```
 
 Mission 1.2 Calculate each vending machine’s sales revenue and number of orders for April 2017, and also compute the overall total sales revenue and total number of orders across all vending machines. Display the results in a table within the report.
@@ -109,7 +107,47 @@ ggplot(top5, aes(x = 商品, y = amont, fill = 商品)) +
 
 Mission 2.2 visualise all vendor machine revenue trend in monthly basis and also its growth rate in bar chart.
 ```{r}
-
+total_order_per_month <- sqldf("select 地点 as Location, strftime('%m', 支付时间) as Month,sum(实际金额) as Revenue from combine3 where Month is not null group by 地点,Month")
+total_order_per_month
+ggplot(total_order_per_month, aes(x = Month, y = Revenue,group = Location, color = Location)) +
+  geom_line() +
+  theme(legend.position = "right")+
+  labs(title = "Vendor Machine Revenue Trend In Monthly Basis",y = "Monthly Revenue",x = "Month")
+loc_A <- total_order_per_month[total_order_per_month$Location=="A",]
+loc_B <- total_order_per_month[total_order_per_month$Location=="B",]
+loc_C <- total_order_per_month[total_order_per_month$Location=="C",]
+loc_D <- total_order_per_month[total_order_per_month$Location=="D",]
+loc_E <- total_order_per_month[total_order_per_month$Location=="E",]
+loc_A$Diff <- c(0, diff(loc_A$Revenue))
+loc_B$Diff <- c(0, diff(loc_B$Revenue))
+loc_C$Diff <- c(0, diff(loc_C$Revenue))
+loc_D$Diff <- c(0, diff(loc_D$Revenue))
+loc_E$Diff <- c(0, diff(loc_E$Revenue))
+loc_A
+loc_B
+loc_C
+loc_D
+loc_E
+ggplot(loc_A, aes(x = Month, y = Diff)) +
+  geom_bar(stat = "identity",
+           show.legend = FALSE) +
+  labs(title = "Growth Rate of Vendor Machine A",y = "Monthly Revenue",x = "Month")
+ggplot(loc_B, aes(x = Month, y = Diff)) +
+  geom_bar(stat = "identity",
+           show.legend = FALSE) +
+  labs(title = "Growth Rate of Vendor Machine B",y = "Monthly Revenue",x = "Month")
+ggplot(loc_C, aes(x = Month, y = Diff)) +
+  geom_bar(stat = "identity",
+           show.legend = FALSE) +
+  labs(title = "Growth Rate of Vendor Machine C",y = "Monthly Revenue",x = "Month")
+ggplot(loc_D, aes(x = Month, y = Diff)) +
+  geom_bar(stat = "identity",
+           show.legend = FALSE) +
+  labs(title = "Growth Rate of Vendor Machine D",y = "Monthly Revenue",x = "Month")
+ggplot(loc_E, aes(x = Month, y = Diff)) +
+  geom_bar(stat = "identity",
+           show.legend = FALSE) +
+  labs(title = "Growth Rate of Vendor Machine E",y = "Monthly Revenue",x = "Month")
 ```
 
 Mission2.3 plot margin revenue proportion for each vendor machine. Suppose the margin revenue rate of beverage and non-beverage is 25% and 20% respectively.
