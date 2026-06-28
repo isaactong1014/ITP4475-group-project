@@ -254,7 +254,13 @@ Mission 3.1
 Use any machine learning approach to auto labelling the salse status of each brevage products in each Vendor machine. There are three types of labels : unsaleable, normal, trending. In which, unsaleable means the salse status was uncertain, and normal means there is no observable sale pattern, treding mean the sale is good. 
 
 ```{r}
-
+product_loc2 <- sqldf("select Location, Product, count(Product) as Sale_Count from product_loc group by Product")
+product_loc2
+fit = Mclust(product_loc2$Sale_Count,G=3)
+product_loc2$Cluster <- fit$classification
+cluster_map <- c("unsaleable","normal","trending")
+product_loc2$Status <- cluster_map[product_loc2$Cluster]
+product_loc2
 ```
 
 Mission 3.2  Use any machine learning approach to classify the sale segnments of different types of product category by the relationship of the Category total Revenue.
