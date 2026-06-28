@@ -94,12 +94,19 @@ Mission2.1 visualise the top 5 sale product in June 2017 using bar chart
 ```{r}
 count_product <- combine2
 count_product <- sqldf("select 商品, count(商品) as amont from count_product where 支付时间 like '2017-06-%' group by 商品 order by amont desc")
+count_product_C <- sqldf("select 商品,大类,二级类,实际金额, count(商品) as amont from combine2 where 地点 = 'C' group by 商品 order by amont desc")
 count_product
+count_product_C
 top5 <- count_product[1:5,]
+top5_C <- count_product_C[1:10,]
 top5
+top5_C
 ggplot(top5, aes(x = 商品, y = amont, fill = 商品)) +
   geom_bar(stat = "identity") +
   labs(title = "Best Five Sale Products")
+ggplot(top5_C, aes(x = 商品, y = amont, fill = 商品)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Best Ten Sale Products in Vendor Machine C ")
 ```
 
 Mission 2.2 visualise all vendor machine revenue trend in monthly basis and also its growth rate in bar chart.
