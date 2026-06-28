@@ -261,6 +261,8 @@ product_loc2$Cluster <- fit$classification
 cluster_map <- c("unsaleable","normal","trending")
 product_loc2$Status <- cluster_map[product_loc2$Cluster]
 product_loc2
+product_loc2_1 <- sqldf("select Location, Product, Status from product_loc2 ")
+product_loc2_1
 ```
 
 Mission 3.2  Use any machine learning approach to classify the sale segnments of different types of product category by the relationship of the Category total Revenue.
