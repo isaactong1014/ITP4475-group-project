@@ -204,22 +204,27 @@ loc_E_cal
 pie(
    loc_A_cal$Total_Revenue_Rate,
    labels=loc_A_cal$Category,
+   main = "Margin Revenue of Machine A"
    )
 pie(
    loc_B_cal$Total_Revenue_Rate,
    labels=loc_B_cal$Category,
+   main = "Margin Revenue of Machine B"
    )
 pie(
    loc_C_cal$Total_Revenue_Rate,
    labels=loc_C_cal$Category,
+   main = "Margin Revenue of Machine C"
    )
 pie(
    loc_D_cal$Total_Revenue_Rate,
    labels=loc_D_cal$Category,
+   main = "Margin Revenue of Machine D"
    )
 pie(
    loc_E_cal$Total_Revenue_Rate,
    labels=loc_E_cal$Category,
+   main = "Margin Revenue of Machine E"
    )
 ```
 
