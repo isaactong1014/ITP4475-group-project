@@ -254,7 +254,7 @@ Mission 3.1
 Use any machine learning approach to auto labelling the salse status of each brevage products in each Vendor machine. There are three types of labels : unsaleable, normal, trending. In which, unsaleable means the salse status was uncertain, and normal means there is no observable sale pattern, treding mean the sale is good. 
 
 ```{r}
-product_loc2 <- sqldf("select Location, Product, count(Product) as Sale_Count from product_loc group by Product,Location order by Location")
+product_loc2 <- sqldf("select Location, Product, count(Product) as Sale_Count from product_loc where Category = '饮料' group by Product,Location order by Location")
 product_loc2
 fit = Mclust(product_loc2$Sale_Count,G=3)
 product_loc2$Cluster <- fit$classification
