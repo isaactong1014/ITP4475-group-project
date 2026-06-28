@@ -9,6 +9,8 @@ require(ggplot2)
 require(mclust)
 require(rpart)
 require(rpart.plot)
+require(foreign)
+require(e1071)
 ```
 
 data input
@@ -63,8 +65,9 @@ combine
 Mission 1.1 According to the merged dataset, suppose each location only have one vendor machine. Extract the Sales record from the merged dataset and store the data separately based on the Vendor machine location "A", "B", "C", "D", "E".
 ```{r}
 sales_by_location <- sqldf("select * from combine
-                           order by 地点")
+                          order by 地点")
 sales_by_location
+
 ```
 
 Mission 1.2 Calculate each vending machine’s sales revenue and number of orders for April 2017, and also compute the overall total sales revenue and total number of orders across all vending machines. Display the results in a table within the report.
@@ -125,23 +128,23 @@ loc_E
 ggplot(loc_A, aes(x = Month, y = Diff)) +
   geom_bar(stat = "identity",
            show.legend = FALSE) +
-  labs(title = "Growth Rate of Vendor Machine A",y = "Monthly Revenue",x = "Month")
+  labs(title = "Growth Rate of Vendor Machine A",y = "Growth Rate",x = "Month")
 ggplot(loc_B, aes(x = Month, y = Diff)) +
   geom_bar(stat = "identity",
            show.legend = FALSE) +
-  labs(title = "Growth Rate of Vendor Machine B",y = "Monthly Revenue",x = "Month")
+  labs(title = "Growth Rate of Vendor Machine B",y = "Growth Rate",x = "Month")
 ggplot(loc_C, aes(x = Month, y = Diff)) +
   geom_bar(stat = "identity",
            show.legend = FALSE) +
-  labs(title = "Growth Rate of Vendor Machine C",y = "Monthly Revenue",x = "Month")
+  labs(title = "Growth Rate of Vendor Machine C",y = "Growth Rate",x = "Month")
 ggplot(loc_D, aes(x = Month, y = Diff)) +
   geom_bar(stat = "identity",
            show.legend = FALSE) +
-  labs(title = "Growth Rate of Vendor Machine D",y = "Monthly Revenue",x = "Month")
+  labs(title = "Growth Rate of Vendor Machine D",y = "Growth Rate",x = "Month")
 ggplot(loc_E, aes(x = Month, y = Diff)) +
   geom_bar(stat = "identity",
            show.legend = FALSE) +
-  labs(title = "Growth Rate of Vendor Machine E",y = "Monthly Revenue",x = "Month")
+  labs(title = "Growth Rate of Vendor Machine E",y = "Growth Rate",x = "Month")
 ```
 
 Mission2.3 plot margin revenue proportion for each vendor machine. Suppose the margin revenue rate of beverage and non-beverage is 25% and 20% respectively.
@@ -233,6 +236,7 @@ pie(
 Mission 2.4 - plot the total revenue of each machines in April 2027 by bubble chart
 ```{r}
 count_order_apr
+
 ggplot(count_order_apr, aes(x = Location, y = Sale_Volume, size = Revenue)) +
   geom_point(alpha = 0.7)
 ```
@@ -267,5 +271,30 @@ product_loc2_1
 
 Mission 3.2  Use any machine learning approach to classify the sale segnments of different types of product category by the relationship of the Category total Revenue.
 ```{r}
+product_loc3 <- sqldf("select Location, Product, count(Product) as Sale_Count from product_loc group by Product,Location order by Location")
+product_loc3
+fit = Mclust(product_loc3$Sale_Count,G=3)
+product_loc3$Cluster <- fit$classification
+cluster_map <- c("unsaleable","normal","trending")
+product_loc3$Status <- cluster_map[product_loc3$Cluster]
+product_loc3
+product_loc3_1 <- sqldf("select Location, Product, Status from product_loc2 ")
+product_loc3_1
 
+classify <- sqldf("select product_loc3_1.*, combine.大类 as Category, combine.二级类 as Sub_Category from product_loc3_1,combine where product_loc3_1.Product = combine.商品 group by Product")
+classify
+
+#model building
+size = nrow(classify)
+training = sample(1:size,size*0.8,replace = F)
+train = classify[training,]
+test = classify[-training,]
+model_NB = naiveBayes(formula=Status~Location+Category+Sub_Category,data=train)
+model_DT = rpart(Status~Location+Category+Sub_Category,data=train)
+
+NB_prediting = predict(model_NB,test,type = "class")
+Tree_prediting = predict(model_DT,test,type = "class")
+Comparsion = data.frame(Actual_Selected = test$Status,NB_prediting,Tree_prediting)
+Comparsion
 ```
+
