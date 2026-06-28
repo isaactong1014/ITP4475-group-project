@@ -50,14 +50,6 @@ sale_data$支付时间 <- as.POSIXct(sale_data$支付时间, tz = "UTC", format 
 names(product_information)[names(product_information) == '商品'] <- '商品1'
 sale_data
 product_information
-for (col in colnames(sale_data)) {
-  for (row in seq_len(nrow(sale_data))) {
-    if (is.na(sale_data[row, col])) {
-      paste("Column:", col, "- Row:", row, "is missing\n")
-    }
-  }
-}
-
 ```
 
 Merge Data
@@ -152,7 +144,83 @@ ggplot(loc_E, aes(x = Month, y = Diff)) +
 
 Mission2.3 plot margin revenue proportion for each vendor machine. Suppose the margin revenue rate of beverage and non-beverage is 25% and 20% respectively.
 ```{r}
+product_loc <- sqldf("select 地点 as Location,商品 as Product,大类 as Category,实际金额 as Price from combine order by 地点")
+product_loc
 
+loc_A <- product_loc[product_loc$Location=="A",]
+loc_B <- product_loc[product_loc$Location=="B",]
+loc_C <- product_loc[product_loc$Location=="C",]
+loc_D <- product_loc[product_loc$Location=="D",]
+loc_E <- product_loc[product_loc$Location=="E",]
+
+loc_A_D <- loc_A[loc_A$Category=="饮料",]
+loc_B_D <- loc_B[loc_B$Category=="饮料",]
+loc_C_D <- loc_C[loc_C$Category=="饮料",]
+loc_D_D <- loc_D[loc_D$Category=="饮料",]
+loc_E_D <- loc_E[loc_E$Category=="饮料",]
+
+loc_A_ND <- loc_A[loc_A$Category=="非饮料",]
+loc_B_ND <- loc_B[loc_B$Category=="非饮料",]
+loc_C_ND <- loc_C[loc_C$Category=="非饮料",]
+loc_D_ND <- loc_D[loc_D$Category=="非饮料",]
+loc_E_ND <- loc_E[loc_E$Category=="非饮料",]
+
+loc_A_D$Revenue_Rate <- loc_A_D$Price*0.25
+loc_B_D$Revenue_Rate <- loc_B_D$Price*0.25
+loc_C_D$Revenue_Rate <- loc_C_D$Price*0.25
+loc_D_D$Revenue_Rate <- loc_D_D$Price*0.25
+loc_E_D$Revenue_Rate <- loc_E_D$Price*0.25
+
+loc_A_ND$Revenue_Rate <- loc_A_ND$Price*0.2
+loc_B_ND$Revenue_Rate <- loc_B_ND$Price*0.2
+loc_C_ND$Revenue_Rate <- loc_C_ND$Price*0.2
+loc_D_ND$Revenue_Rate <- loc_D_ND$Price*0.2
+loc_E_ND$Revenue_Rate <- loc_E_ND$Price*0.2
+
+loc_A_D
+loc_B_D
+loc_C_D
+loc_D_D
+loc_E_D
+
+loc_A_ND
+loc_B_ND
+loc_C_ND
+loc_D_ND
+loc_E_ND
+
+loc_A_cal <- data.frame(rbind(sqldf("select Location, Category, sum(Revenue_Rate) as Total_Revenue_Rate from loc_A_D"),sqldf("select Location, Category, sum(Revenue_Rate) as Total_Revenue_Rate from loc_A_ND")))
+loc_B_cal <- data.frame(rbind(sqldf("select Location, Category, sum(Revenue_Rate) as Total_Revenue_Rate from loc_B_D"),sqldf("select Location, Category, sum(Revenue_Rate) as Total_Revenue_Rate from loc_B_ND")))
+loc_C_cal <- data.frame(rbind(sqldf("select Location, Category, sum(Revenue_Rate) as Total_Revenue_Rate from loc_C_D"),sqldf("select Location, Category, sum(Revenue_Rate) as Total_Revenue_Rate from loc_C_ND")))
+loc_D_cal <- data.frame(rbind(sqldf("select Location, Category, sum(Revenue_Rate) as Total_Revenue_Rate from loc_D_D"),sqldf("select Location, Category, sum(Revenue_Rate) as Total_Revenue_Rate from loc_D_ND")))
+loc_E_cal <- data.frame(rbind(sqldf("select Location, Category, sum(Revenue_Rate) as Total_Revenue_Rate from loc_E_D"),sqldf("select Location, Category, sum(Revenue_Rate) as Total_Revenue_Rate from loc_E_ND")))
+
+loc_A_cal
+loc_B_cal
+loc_C_cal
+loc_D_cal
+loc_E_cal
+
+pie(
+   loc_A_cal$Total_Revenue_Rate,
+   labels=loc_A_cal$Category,
+   )
+pie(
+   loc_B_cal$Total_Revenue_Rate,
+   labels=loc_B_cal$Category,
+   )
+pie(
+   loc_C_cal$Total_Revenue_Rate,
+   labels=loc_C_cal$Category,
+   )
+pie(
+   loc_D_cal$Total_Revenue_Rate,
+   labels=loc_D_cal$Category,
+   )
+pie(
+   loc_E_cal$Total_Revenue_Rate,
+   labels=loc_E_cal$Category,
+   )
 ```
 
 Mission 2.4 - plot the total revenue of each machines in April 2027 by bubble chart
